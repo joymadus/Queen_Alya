@@ -1,16 +1,21 @@
-FROM node:20
 
-RUN git clone https://github.com/STAR-KING0/Queen_Alya.git /root/STAR-KING0
+FROM node:lts-buster
 
-# Clear npm cache and remove node_modules directories
-RUN npm cache clean --force
-RUN rm -rf /root/STAR-KING0/node_modules
+RUN apt-get update && \
+  apt-get install -y \
+  ffmpeg \
+  imagemagick \
+  webp && \
+  apt-get upgrade -y && \
+  rm -rf /var/lib/apt/lists/*
 
-# Install dependencies
-WORKDIR /root/STAR-KING0
-RUN npm install
+COPY package.json .
 
-# Add additional Steps To Run...
+RUN npm install && npm install qrcode-terminal
+
+COPY . .
+
 EXPOSE 3000
-CMD ["npm","start" ]
-# IF YOU ARE MODIFYING THIS BOT DONT CHANGE THIS  RUN rm -rf /root/STAR-KING0/node_modules
+
+CMD ["node", "index.js", "--server"]
+              
